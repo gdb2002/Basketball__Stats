@@ -35,21 +35,27 @@ def add_value(file: str, value: str, title: str, sep: str = '-', copy = False, N
     f.close
     return 
 
-def combine(path: str, new_path):
+def combine(path: str, new_path:str, skip = 2, empty_line = False):
     """
     Combines a folder into a csv file
+    Path -> a folder
+    new_path -> FILE
     """
     new_file = open(new_path, 'w')
     counter = 0
     folder = os.scandir(path)
     
     for file in folder:
-        f = open(path+file.name, "r")
+        f = open(path+'/'+file.name, "r") #modifed
         f.readline()
         if counter != 0:
-            f.readlines(2)
-            
-        new_file.write(f.read())
+            f.readlines(skip)
+        
+        if not empty_line:
+            new_file.write(f.read())
+        else:
+            hold =f.read() + '\n'
+            new_file.write(hold)
         f.close()
         counter += 1
         
@@ -59,10 +65,13 @@ def combine(path: str, new_path):
         
 if __name__ == "__main__":
     
-    path = "./Stats/Player_stats"
-    folder = os.scandir(path)
+    path_player = "./Stats/Combined_Stats"
+    path_game = "./Stats/Game_stats"
+    folder_player = os.scandir("./Stats/Combined_Stats")
+    folder_game = os.scandir("./Stats/Game_stats")
     
-    for file in folder:
-        value = file.name[:-4]
-        #add_value(path+ '/'+file.name, value, "Year", sep = '\t', copy = True, New_file="./Stats/Combined_Stats/"+file.name) # gives me the new copies
+    combine(path_player, "./player_combined.csv")
+    combine(path_game, "./game_combined.csv", empty_line=True)
+        
+
         
